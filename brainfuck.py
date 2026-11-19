@@ -71,8 +71,6 @@ def compile(bFile : list):
                         elif bFile[i] == "[":
                             count -= 1
         i += 1
-    print(memory)
-    print(memoryNeg)
 
 if __name__ == "__main__":
     print("\033[91m" + " _           _     ___         _   \n| |_ ___ ___|_|___|  _|_ _ ___| |_ \n| . |  _| .'| |   |  _| | |  _| '_|\n|___|_| |__,|_|_|_|_| |___|___|_,_|" + "\033[0m")

@@ -1,45 +1,78 @@
+def extend(some_list : list, target_len : int):
+    return some_list[:target_len] + [0]*(target_len - len(some_list))
+
 def compile(bFile : list):
-    memory : list = [0] * 2000
+    memory : list = [0] * 10
+    memoryNeg : list = [0] * 10
+    max = 10
+    min = -10
     pointer : int = 0
     i : int = 0
     while i < len(bFile):
-        if bFile[i] == ">":
-            pointer += 1
-        elif bFile[i] == "<":
-            pointer -= 1
-        elif bFile[i] == "+":
-            if memory[pointer] < 255:
-                memory[pointer] += 1
-            else:
-                memory[pointer] = 0
-        elif bFile[i] == "-":
-            if memory[pointer] > 0:
-                memory[pointer] -= 1
-            else:
-                memory[pointer] = 255
-        elif bFile[i] == ".":
-            print(chr(memory[pointer]), end="")
-        elif bFile[i] == ",":
-            memory[pointer] = ord(input())
-        elif bFile[i] == "[":
-            if memory[pointer] == 0:
-                count = 1
-                while count > 0:
-                    i += 1
-                    if bFile[i] == "[":
-                        count += 1
-                    elif bFile[i] == "]":
-                        count -= 1
-        elif bFile[i] == "]":
-            if memory[pointer] != 0:
-                count = 1
-                while count > 0:
-                    i -= 1
-                    if bFile[i] == "]":
-                        count += 1
-                    elif bFile[i] == "[":
-                        count -= 1
+        match bFile[i]:
+            case ">":
+                pointer += 1
+                if pointer >= max:
+                    memory = extend(memory, 10)
+                    max += 10
+            case "<":
+                pointer -= 1
+                if pointer <= min:
+                    memoryNeg = extend(memoryNeg, 10)
+                    min -= 10
+            case "+":
+                if pointer >= 0:
+                    if memory[pointer] < 255:
+                        memory[pointer] += 1
+                    else:
+                        memory[pointer] = 0
+                else:
+                    if memoryNeg[-pointer] < 255:
+                        memoryNeg[-pointer] += 1
+                    else:
+                        memoryNeg[-pointer] = 0
+            case "-":
+                if pointer >= 0:
+                    if memory[pointer] > 0:
+                        memory[pointer] -= 1
+                    else:
+                        memory[pointer] = 255
+                else:
+                    if memoryNeg[-pointer] > 0:
+                        memoryNeg[-pointer] -= 1
+                    else:
+                        memoryNeg[-pointer] = 255
+            case ".":
+                if pointer >= 0:
+                    print(chr(memory[pointer]), end="")
+                else:
+                    print(chr(memoryNeg[-pointer]), end="")
+            case ",":
+                if pointer >= 0:
+                    memory[pointer] = ord(input())
+                else:
+                    memoryNeg[-pointer] = ord(input())
+            case "[":
+                if (pointer >= 0 and memory[pointer] == 0) or (pointer < 0 and memoryNeg[-pointer] == 0):
+                    count = 1
+                    while count > 0:
+                        i += 1
+                        if bFile[i] == "[":
+                            count += 1
+                        elif bFile[i] == "]":
+                            count -= 1
+            case "]":
+                if (pointer >= 0 and memory[pointer] != 0) or (pointer < 0 and memoryNeg[-pointer] != 0):
+                    count = 1
+                    while count > 0:
+                        i -= 1
+                        if bFile[i] == "]":
+                            count += 1
+                        elif bFile[i] == "[":
+                            count -= 1
         i += 1
+    print(memory)
+    print(memoryNeg)
 
 if __name__ == "__main__":
     print("\033[91m" + " _           _     ___         _   \n| |_ ___ ___|_|___|  _|_ _ ___| |_ \n| . |  _| .'| |   |  _| | |  _| '_|\n|___|_| |__,|_|_|_|_| |___|___|_,_|" + "\033[0m")
